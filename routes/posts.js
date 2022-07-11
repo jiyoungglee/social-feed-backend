@@ -50,4 +50,22 @@ router.delete('/deletepost', (req,res) => {
     }
 })
 
+router.put('/updatelikes', (req,res) => {
+  try {
+    db.query(
+      'UPDATE posts SET likes=? WHERE id=?',
+      [req.body.likes, req.body.id],
+      (err, result) => {
+        if(err) {
+          console.log(err);
+        }
+        res.send(result);
+      }
+    );
+    } catch(error) {
+      console.error(error);
+      res.status(500).send(error);
+    }
+})
+
 module.exports = router;
