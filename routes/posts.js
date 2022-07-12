@@ -4,7 +4,8 @@ var router = express.Router();
 
 router.get('/', (req,res) => {
   db.query(
-    'SELECT * FROM posts',
+    `SELECT posts.*, users.username FROM posts
+    LEFT JOIN users ON posts.userId = users.userId`,
     (err, result) => {
       if(err) {
         console.log(err);
