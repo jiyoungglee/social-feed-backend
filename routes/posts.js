@@ -4,12 +4,28 @@ var router = express.Router();
 
 router.get('/', (req,res) => {
   db.query(
-    `SELECT posts.*, users.username FROM posts
-    LEFT JOIN users ON posts.userId = users.userId`,
+    `SELECT usersPost.username as poster, posts.*, JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'commentId', comments.commentId, 
+        'commenter', usersComment.username,
+        'commentLikes', comments.commentLikes, 
+        'commentText', comments.commentText, 
+        'commentTimestamp', comments.commentTimestamp
+      )
+    ) as comments
+    FROM posts
+    LEFT JOIN comments ON comments.postId = posts.id
+    LEFT JOIN users usersPost
+    ON usersPost.userId = posts.userId
+    LEFT JOIN users usersComment
+    ON usersComment.userId = comments.userId
+    GROUP BY posts.id
+    ORDER BY timestamp DESC`,
     (err, result) => {
       if(err) {
         console.log(err);
       }
+      result.forEach(post => post.comments = JSON.parse(post.comments))
       res.send(result);
     }
   );
@@ -55,8 +71,8 @@ router.delete('/deletepost', (req,res) => {
 router.put('/updatelikes', (req,res) => {
   try {
     db.query(
-      'UPDATE posts SET likes=? WHERE id=?',
-      [req.body.likes, req.body.id],
+      'UPDATE posts SET postLikes=? WHERE id=?',
+      [req.body.postLikes, req.body.id],
       (err, result) => {
         if(err) {
           console.log(err);
