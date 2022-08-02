@@ -7,12 +7,12 @@ router.get('/', (req,res) => {
   db.query(
     `SELECT users.username as poster, posts.*, distinctFavorites.*, ifnull(numberComments, 0) commentsCount
     FROM posts
-    LEFT JOIN users ON users.userId = posts.userId
+    LEFT JOIN users ON users.userId = posts.posterId
     LEFT JOIN
         (SELECT comments.*, users.username as commenter
         FROM comments
         LEFT JOIN users
-        ON users.userId = comments.userId
+        ON users.userId = comments.commenterId
         WHERE commentId IN (
           SELECT MAX(commentId) AS commentId
           FROM (
@@ -50,13 +50,13 @@ router.put('/getResults', (req,res) => {
     FROM (
 		SELECT users.username as poster, posts.*
     FROM posts
-		LEFT JOIN users ON users.userId = posts.userId
+		LEFT JOIN users ON users.userId = posts.posterId
 		WHERE posts.postDetails LIKE ? OR users.username LIKE ?) filteredPosts
     LEFT JOIN
         (SELECT comments.*, users.username as commenter
         FROM comments
         LEFT JOIN users
-        ON users.userId = comments.userId
+        ON users.userId = comments.commenterId
         WHERE commentId IN (
           SELECT MAX(commentId) AS commentId
           FROM (
@@ -92,7 +92,7 @@ router.put('/getResults', (req,res) => {
 router.post('/insert', (req,res) => {
   try {
   db.query(
-    'INSERT INTO posts (userId, postDetails) VALUES (?, ?)',
+    'INSERT INTO posts (posterId, postDetails) VALUES (?, ?)',
     [req.body.userId, req.body.postDetails],
     (err, result) => {
       if(err) {

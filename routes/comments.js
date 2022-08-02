@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/', (req,res) => {
   db.query(
     `SELECT comments.*, users.username as commenter FROM comments
-    LEFT JOIN users ON comments.userId = users.userId
+    LEFT JOIN users ON comments.commenterId = users.userId
     ORDER BY commentTimestamp DESC`,
     (err, result) => {
       if(err) {
@@ -19,7 +19,7 @@ router.get('/', (req,res) => {
 router.get('/getComments/:postId', (req,res) => {
   db.query(
     `SELECT comments.*, users.username as commenter FROM comments
-    LEFT JOIN users ON comments.userId = users.userId
+    LEFT JOIN users ON comments.commenterId = users.userId
     WHERE postId=?
     ORDER BY commentTimestamp DESC`,
     [req.params.postId],
@@ -35,7 +35,7 @@ router.get('/getComments/:postId', (req,res) => {
 router.get('/getComment/:commentId', (req,res) => {
   db.query(
     `SELECT comments.*, users.username as commenter FROM comments
-    LEFT JOIN users ON comments.userId = users.userId
+    LEFT JOIN users ON comments.commenterId = users.userId
     WHERE commentId=?
     ORDER BY commentTimestamp DESC`,
     [req.params.commentId],
@@ -51,7 +51,7 @@ router.get('/getComment/:commentId', (req,res) => {
 router.post('/insert', (req,res) => {
   try {
   db.query(
-    `INSERT INTO comments (userId, postId, commentText) VALUES (?, ?, ?)`,
+    `INSERT INTO comments (commenterId, postId, commentText) VALUES (?, ?, ?)`,
     [req.body.userId, req.body.postId, req.body.commentText],
     (err, result) => {
       if(err) {

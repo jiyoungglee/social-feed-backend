@@ -1,13 +1,20 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const passport = require('passport');
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var postsRouter = require('./routes/posts');
-var commentsRouter = require('./routes/comments');
 
-var app = express();
+const indexRouter = require('./routes/index');
+const postsRouter = require('./routes/posts');
+const commentsRouter = require('./routes/comments');
+const usersRouter = require('./routes/users');
+const db = require('./connection');
+
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,10 +25,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Passport session
+app.use(session({
+  key: 'userId',
+  secret: process.env.SESSION_SECRET,
+  store: new MySQLStore({}, db),
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000*60*60*24
+  }
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+require('./passport.js');
+
 app.use('/', indexRouter);
 app.use('/posts', postsRouter);
 app.use('/comments', commentsRouter);
-
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
