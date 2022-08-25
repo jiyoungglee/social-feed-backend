@@ -7,9 +7,9 @@ const genPassword = require('../passwordUtils').genPassword;
 function userExists(req, res, next) {
   db.query('SELECT * FROM users where email= ?', [req.body.email], function(error, results, fields) {
     if (error) {
-      console.log('Error');
+      res.status(500).send('Invalid Request')
     } else if (results.length > 0) {
-      res.redirect('/userAlreadyExists')
+      res.status(500).send('User already exists')
     } else {
       next();
     }
@@ -27,14 +27,12 @@ router.post('/register', userExists, (req, res) => {
     [req.body.username, req.body.email, hash, salt],
     (err, result) => {
       if (err) {
-      console.log(err);
-    } 
-      console.log("Successfully Entered");
-      res.send(result);
+        throw new Error(err);
+      } 
+      res.sendStatus(200);
     }
   );
   } catch(error) {
-    console.error(error);
     res.status(500).send(error);
   }
 });
@@ -47,23 +45,18 @@ function isAuth(req, res, next) {
   }
 }
 
-router.post('/login', passport.authenticate('local', {failureRedirect: '/login'}), (req, res) => {
-  if(req.isAuthenticated()) {
-    res.send(req.data)
-  } else {
-    res.status(401).json({msg: 'Incorrect Password'})
-  }
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  res.send(req.user);
 });
 
-router.post('/logout', (req, res, next) => {
+router.post('/logout', (req, res) => {
   req.logout((err) => {
-    if (err) { return next(err); }
-    
-  });
-});
+    if (err) res.status(500).send(err)});
+  res.sendStatus(200);
+}); 
 
 router.get('/currentUser', isAuth, (req,res) => {
   res.json(req.session.passport.user);
-})
+});
 
 module.exports = router;
