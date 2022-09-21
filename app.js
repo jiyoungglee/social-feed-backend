@@ -44,7 +44,9 @@ app.use(session({
   store: new MySQLStore({}, db),
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
+    sameSite: 'none',
     maxAge: 1000*60*60*24
   }
 }))
