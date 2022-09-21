@@ -55,7 +55,10 @@ router.post('/logout', (req, res) => {
   res.sendStatus(200);
 }); 
 
-router.get('/currentUser', isAuth, (req,res) => {
+router.get('/currentUser', 
+// isAuth, 
+(req,res) => {
+  console.log(req.session.passport.user)
   res.json(req.session.passport.user);
 });
 
