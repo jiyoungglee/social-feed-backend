@@ -41,7 +41,6 @@ function isAuth(req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.json(req.session.passport.user);
     res.status(401).json({msg: 'User not Authorized'});
   }
 }
