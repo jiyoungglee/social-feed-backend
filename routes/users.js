@@ -41,6 +41,7 @@ function isAuth(req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
+    res.json(req.session.passport.user);
     res.status(401).json({msg: 'User not Authorized'});
   }
 }
@@ -55,10 +56,7 @@ router.post('/logout', (req, res) => {
   res.sendStatus(200);
 }); 
 
-router.get('/currentUser', 
-// isAuth, 
-(req,res) => {
-  console.log(req.session.passport.user)
+router.get('/currentUser', isAuth, (req,res) => {
   res.json(req.session.passport.user);
 });
 
