@@ -38,15 +38,15 @@ app.use(function(req, res, next) {
 });
 
 // Passport session
+app.set('trust proxy', 1)
 app.use(session({
   key: 'userId',
   secret: process.env.SESSION_SECRET,
   store: new MySQLStore({}, db),
   resave: false,
   saveUninitialized: false,
-  proxy: true,
   cookie: {
-    sameSite: 'none',
+    secure: true,
     maxAge: 1000*60*60*24
   }
 }))
