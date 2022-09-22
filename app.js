@@ -6,8 +6,8 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const passport = require('passport');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
-
 
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts');
@@ -26,17 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use(function(req, res, next) {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-//   if ('OPTIONS' == req.method) {
-//       return res.sendStatus(200);
-//   } else {
-//       next();
-//   }
-// });
+app.use(cookieParser())
 
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost', 'https://127.0.0.1', 'https://jiyoungglee.github.io', 'http://jiyoungglee.github.io'],
