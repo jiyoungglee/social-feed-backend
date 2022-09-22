@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // });
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost', 'https://127.0.0.1', 'https://jiyoungglee.github.io/', 'http://jiyoungglee.github.io/'],
+  origin: ['http://localhost:3000', 'http://localhost', 'https://127.0.0.1', 'https://jiyoungglee.github.io', 'http://jiyoungglee.github.io'],
   credentials: true,
   methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE']
 }));
