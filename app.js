@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser())
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost', 'https://127.0.0.1', 'https://jiyoungglee.github.io', 'http://jiyoungglee.github.io'],
+  origin: ['http://localhost:3000', 'http://localhost', 'https://127.0.0.1', 'https://jiyoungglee.github.io', 'http://jiyoungglee.github.io', 'https://www.jiyoung-lee.com'],
   credentials: true,
   methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE']
 }));
@@ -44,8 +44,6 @@ app.use(session({
   saveUninitialized: false,
   proxy: true,
   cookie: {
-    sameSite:'none',
-    secure: true,
     maxAge: 1000*60*60*24
   }
 }))
